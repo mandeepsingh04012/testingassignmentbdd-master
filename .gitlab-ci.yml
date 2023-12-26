@@ -1,0 +1,32 @@
+image: maven:3-jdk-8
+
+stages:
+  - test
+  - report
+
+variables:
+  ALLURE_RESULTS_DIR: "target/allure-results"
+  ALLURE_REPORTS_DIR: "target/site/allure-maven-plugin"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+
+test:
+  stage: test
+  script:
+    - mvn clean test "-Dcucumber.options= --tags @smokeTest"
+
+pages:
+  stage: report
+  script:
+    - mvn io.qameta.allure:allure-maven:report
+    - mv $ALLURE_REPORTS_DIR public
+  artifacts:
+    paths:
+      - public
+
+
+
+
